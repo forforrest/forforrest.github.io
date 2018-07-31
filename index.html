@@ -323,12 +323,24 @@
                 
               
 
-              <time title="创建: 2018-07-25 22:38:30 / 修改: 22:58:53" itemprop="dateCreated datePublished" datetime="2018-07-25T22:38:30+08:00">2018-07-25</time>
+              <time title="创建: 2018-07-25 22:38:30" itemprop="dateCreated datePublished" datetime="2018-07-25T22:38:30+08:00">2018-07-25</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">修改于</span>
+                
+                <time title="修改: 2018-07-26 23:31:02" itemprop="dateModified" datetime="2018-07-26T23:31:02+08:00">2018-07-26</time>
               
             
           </span>
@@ -362,59 +374,14 @@
 
       
         
-          
-            <h3 id="记录一下在CentOS7安装Nginx的过程。"><a href="#记录一下在CentOS7安装Nginx的过程。" class="headerlink" title="记录一下在CentOS7安装Nginx的过程。"></a>记录一下在CentOS7安装Nginx的过程。</h3><p>编译安装Nginx需要GCC，PCRE，zlib和OpenSSL，需要注意的是，PCRE，zlib和Openssl不仅要安装软件本身，还需要安装开发开发包。</p>
-<p><code>yum -y install gcc pcre pcre-devel zlib zlib-devel openssl</code> </p>
-<p><code>openssl-devel</code></p>
-<p>这些前置的软件和工具安装好以后，就可以进行到下一步。</p>
-<p>首先是从官网下载最新的稳定版的源码包，将源码包下载并且解压：</p>
-<p><code>wget http://nginx.org/download/nginx-1.12.2.tar.gz</code></p>
-<p><code>tar zxf nginx-1.12.2.tar.gz</code></p>
-<p>解压完成以后进到目录下，还有三个步骤，第一个步骤是配置选项，如果要使用默认配置的话，就直接运行：</p>
-<p><code>./configure</code></p>
-<p>如果需要设置自定义的选项的话，就可以带上对应的参数：</p>
-<p><code>./configure --with-http_ssl_module</code></p>
-<p>运行这个命令以后，会有一个验证的过程，来检测程序编译的前提条件是否都满足，如果有自定义的选项的话，还有检查选项是否配置正确。下一步使用 <code>make</code> 命令对源码进行编译，如果第一步的验证通过的话，这里不会出现什么问题，然后输入 <code>make install</code> 进行安装，默认的安装目录是/usr/local/nginx，所以如果不是root用户登陆的话，需要获取root权限。</p>
-<p>如果前面的准备工作都做好了的话，安装过程应该会比较顺利。</p>
-<p>一般情况下安装成功以后，可以执行：</p>
-<p><code>/usr/local/nginx/sbin/nginx</code></p>
-<p>来开启Nginx的服务，Nginx默认是监听80端口，所以如果80端口被占用的话， 可能就无法正常启动，可以使用：</p>
-<p><code>netstat -lnp | grep 80</code></p>
-<p>这命令来查看是哪个进程占用了80端口。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/6/23/1642ac6dddee90ad?w=1392&amp;h=110&amp;f=png&amp;s=106646" alt="查看端口占用"></p>
-<p>如果是其他程序占用了80端口，可以将这个进程kill以后，再执行刚才的命令将Nginx启动。</p>
-<p>输入 <code>ps aux | grep nginx</code> 来查看nginx的相关进程：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/6/23/1642ac88074bcdba?w=1462&amp;h=146&amp;f=png&amp;s=150421" alt="查看进程"></p>
-<p>输入 <code>/usr/local/nginx/sbin/nginx -h</code> 可以查看Nginx的相关操作命令：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2018/6/23/1642acb63eebcdfe?w=1116&amp;h=522&amp;f=png&amp;s=497508" alt="nginx help"></p>
-<p>这样基本就安装好了，但是每次都要输入完整的路径，很麻烦，所以有几个方法可以方便一点的，常用的应该有两种：</p>
-<p>第一种是临时的，只在当前终端生效的，是创建一个别名来指向Nginx这个执行文件：</p>
-<p><code>alias nginx=/usr/local/nginx/sbin/nginx</code></p>
-<p>这样就可以在命令行中直接输入类似：</p>
-<p><code>nginx -s reload</code></p>
-<p>命令来操作Nginx。</p>
-<p>还有一种是永久的，那就是将Nginx的路径加入到环境变量中，使用vi打开/etc/profile文件，在文件末尾加上：</p>
-<p><code>PATH=$PATH:/usr/local/nginx/sbin</code></p>
-<p><code>export PATH</code></p>
-<p>注意这里的路径到sbin就到头了，刚才创建别名是创建可执行文件的别名，所以要指定到nginx这个文件。</p>
-<p>然后source一下这个文件，就可以永久的在命令行直接输入nginx这个命令来操作Nginx了。</p>
-<p>最后是将Nginx作为后台守护进程运行，并且能够随着系统的启动而启动，所以需要一个shell脚本来做这件事。</p>
-<p>在/etc/init.d这个目录下新建一个名为nginx的文件，确保是在root用户或者有root权限下进行这些操作。然后在这个文件中输入以下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/bash</span><br><span class="line"># chkconfig:3 10 90</span><br><span class="line"># description: ...</span><br><span class="line"></span><br><span class="line">set -e</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin</span><br><span class="line">DESC=&quot;nginx daemon&quot;</span><br><span class="line">NAME=nginx</span><br><span class="line">DAEMON=/usr/local/nginx/sbin/$NAME</span><br><span class="line">SCRIPTNAME=/etc/init.d/$NAME</span><br><span class="line"></span><br><span class="line"># 如果文件不存在的话，就结束脚本</span><br><span class="line">test -x $DAEMON || exit 0</span><br><span class="line"></span><br><span class="line"># 下面是定义几个函数，用来操作Nginx</span><br><span class="line">d_start() &#123;</span><br><span class="line">    $DAEMON || echo -n &quot; Nginx is already running&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">d_stop() &#123;</span><br><span class="line">    $DAEMON -s quit || echo -n &quot; Nginx is not running&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">d_reload() &#123;</span><br><span class="line">    $DAEMON -s reload || echo -n &quot; Can not reload Nginx&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># $1表示第一个参数</span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">start)</span><br><span class="line">    echo -n &quot;Starting $DESC: $NAME&quot;</span><br><span class="line">    d_start</span><br><span class="line">    echo &quot;Started!&quot;</span><br><span class="line">;;</span><br><span class="line">stop)</span><br><span class="line">    echo -n &quot;Stoping $DESC: $NAME&quot;</span><br><span class="line">    d_stop</span><br><span class="line">echo &quot;Terminated!&quot;</span><br><span class="line">;;</span><br><span class="line">reload)         </span><br><span class="line">    echo -n &quot;Reloading $DESC configuration...&quot;         </span><br><span class="line">    d_reload         </span><br><span class="line">    echo &quot;Reloaded!&quot;</span><br><span class="line">;;</span><br><span class="line">restart)         </span><br><span class="line">    echo -n &quot;Restarting $DESC: $NAME&quot;         </span><br><span class="line">    d_stop         </span><br><span class="line">    # 这里暂停2秒钟以确保Nginx已经完全停止了         </span><br><span class="line">    sleep 2         </span><br><span class="line">    d_start         </span><br><span class="line">    echo &quot;Restarted!&quot;</span><br><span class="line">;;</span><br><span class="line">*)         </span><br><span class="line">    echo &quot;Usage: $SCRIPTNAME &#123;start|stop|restart|reload&#125;&quot; &gt;&amp;2</span><br><span class="line">;;</span><br><span class="line">esac</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure></p>
-<p>然后将这个文件设置为可执行文件：</p>
-<p><code>chmod +x nginx</code></p>
-<p>在这一步之后，已经可以使用类似：</p>
-<p><code>service nginx start</code></p>
-<p>将nginx添加进服务，但是在第一次操作的时候报了一个错：</p>
-<p><code>service nginx does not support chkconfig</code></p>
-<p>后来查了以下发现是在/etc/init.d/nginx文件中少写了两行注释：</p>
-<p><code># chkconfig:3 10 90</code></p>
-<p><code># description:...</code></p>
-<p>其中在这个 <code>chkconfig 3 10 90</code> 中，3的意思表示的是运行级别，Centos的默认启动级别是3，所以这里写3。10代表启动优先级，90代表停止优先级，数字越大优先级越低。</p>
-<p>将这两行注释写在#! /bin/bash后面，然后再重新执行：</p>
-<p><code>chkconfig --add nginx</code></p>
-<p>这样就完成了对Nginx的最简单的安装和本身的配置。</p>
-
-          
+          <h3 id="记录一下在CentOS7安装Nginx的过程。"><a href="#记录一下在CentOS7安装Nginx的过程。" class="headerlink" title="记录一下在CentOS7安装Nginx的过程。"></a>记录一下在CentOS7安装Nginx的过程。</h3>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/25/Nginx的安装和基本配置/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -512,6 +479,8 @@
                 <div class="site-state-item site-state-tags">
                   <a href="/tags/index.html">
                     
+                    
+                      
                     
                       
                     
